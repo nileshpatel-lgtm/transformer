@@ -80,8 +80,9 @@ with tab1:
     st.dataframe(show, use_container_width=True, hide_index=True)
     st.download_button("Download schedule (CSV)", sched.to_csv(index=False).encode(),
                        "pm_schedule.csv", "text/csv")
-    grid = pd.DataFrame(0, index=df["Transformer"], columns=[f"M{t+1}" for t in range(T)])
-    grid.values[:] = sol["x"].astype(int)
+    grid = pd.DataFrame(np.asarray(sol["x"]).round().astype(int),
+                        index=df["Transformer"].tolist(),
+                        columns=[f"M{t+1}" for t in range(T)])
     st.markdown("**Assignment matrix** (1 = maintained in that month)")
     st.dataframe(grid.style.map(lambda v: "background-color:#1f77b4;color:white" if v else ""),
                  use_container_width=True, height=300)
